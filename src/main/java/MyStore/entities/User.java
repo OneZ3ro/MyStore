@@ -32,8 +32,11 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private LocalDate born;
+    @Column(name = "img_profile")
     private String imgProfile;
     private List<Role> roles;
+    @ManyToOne
+    @JoinColumn(name = "locations_id")
     private Location location;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
