@@ -31,23 +31,11 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User", userId));
     }
 
-    public User updateUserById (UUID userId, UserRegistrationDTO body) throws NotFoundException {
-        User userFound = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User", userId));
-        userFound.setName(body.name());
-        userFound.setSurname(body.surname());
-        userFound.setUsername(body.username());
-        userFound.setEmail(body.email());
-//      userFound.setPassword(bcrypt.encode(body.password()));     da sistemare la reimpostazione della password
-        userFound.setBorn(body.born());
-        userFound.setImgProfile(body.urlImgProfile());
-//      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.locationId() != null) {}
-        Location location = locationService.getLocationById(body.locationId());
-        userFound.setLocation(location);
-
-        return userRepository.save(userFound);
-    }
-
     public void deleteUserById (UUID userId) throws NotFoundException{
         userRepository.deleteById(userId);
+    }
+
+    public User getUserByEmail (String email) throws NotFoundException{
+        return userRepository.findByEmail(email).orElseThrow(() ->  new NotFoundException(email));
     }
 }

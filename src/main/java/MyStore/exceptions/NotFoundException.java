@@ -10,4 +10,8 @@ public class NotFoundException extends RuntimeException{
     public NotFoundException(String elemType, long elemId) {
         super(elemType + " with ID: '" + elemId + " ' was not found. Please try again with another ID");
     }
+
+    public NotFoundException(String email) {
+        super(email + " ' was not found. Please try again with another email");
+    }
 }
