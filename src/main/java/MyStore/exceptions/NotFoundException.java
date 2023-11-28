@@ -1,7 +1,13 @@
 package MyStore.exceptions;
 
+import java.util.UUID;
+
 public class NotFoundException extends RuntimeException{
-    public NotFoundException(String elem) {
-        super("L'elemento " + elem + " non è stato trovato. Riprova con un elemento diverso");
+    public NotFoundException(String elemType, UUID elemId) {
+        super(elemType + " with ID: '" + elemId + " ' was not found. Please try again with another ID");
+    }
+
+    public NotFoundException(String elemType, long elemId) {
+        super(elemType + " with ID: '" + elemId + " ' was not found. Please try again with another ID");
     }
 }
