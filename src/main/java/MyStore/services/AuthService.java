@@ -64,7 +64,7 @@ public class AuthService {
     }
 
     public User updateUserById (UUID userId, UserRegistrationDTO body) throws NotFoundException {
-        User userFound = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User", userId));
+        User userFound = userService.getUserById(userId);
         userFound.setName(body.name());
         userFound.setSurname(body.surname());
         userFound.setUsername(body.username());

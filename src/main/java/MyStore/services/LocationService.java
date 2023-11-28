@@ -30,7 +30,6 @@ public class LocationService {
     }
 
     public Location getLocationById (UUID locationId) throws NotFoundException {
-        String locId = locationId.toString();
         return locationRepository.findById(locationId).orElseThrow(() -> new NotFoundException("Location", locationId));
     }
 
@@ -44,7 +43,7 @@ public class LocationService {
     }
 
     public Location updateLocationById (UUID locationId, LocationDTO body) throws NotFoundException {
-        Location locationFound = locationRepository.findById(locationId).orElseThrow(() -> new NotFoundException("Location", locationId));
+        Location locationFound = this.getLocationById(locationId);
         locationFound.setAddress(body.address());
 //      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
         Municipality municipality = municipalityRepository.findById(body.municipalityId()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityId()));
