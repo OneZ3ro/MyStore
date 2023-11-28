@@ -1,6 +1,6 @@
 package MyStore.services;
 
-import MyStore.entities.Location;
+import MyStore.entities.Municipality;
 import MyStore.entities.User;
 import MyStore.enums.Role;
 import MyStore.exceptions.BadRequestException;
@@ -8,6 +8,7 @@ import MyStore.exceptions.NotFoundException;
 import MyStore.exceptions.UnauthorizedException;
 import MyStore.payloads.entities.UserLoginDTO;
 import MyStore.payloads.entities.UserRegistrationDTO;
+import MyStore.repositories.MunicipalityRepository;
 import MyStore.repositories.UserRepository;
 import MyStore.security.JWTTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +28,13 @@ public class AuthService {
     private UserRepository userRepository;
 
     @Autowired
-    private LocationService locationService;
-
-    @Autowired
     private JWTTools jwtTools;
 
     @Autowired
     private PasswordEncoder bcrypt;
+
+    @Autowired
+    private MunicipalityRepository municipalityRepository;
 
     public String authenticateUser(UserLoginDTO body) throws Exception{
         User user = userService.getUserByEmail(body.email());
@@ -55,11 +56,12 @@ public class AuthService {
         newUser.setEmail(body.email());
         newUser.setPassword(bcrypt.encode(body.password()));
         newUser.setBorn(body.born());
+        newUser.setAddress(body.address());
+//      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
+        Municipality municipality = municipalityRepository.findById(body.municipalityId()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityId()));
+        newUser.setMunicipality(municipality);
         newUser.setImgProfile(body.urlImgProfile());
         newUser.setRoles(Arrays.asList(Role.USER));
-//      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.locationId() != null) {}
-        Location location = locationService.getLocationById(body.locationId());
-        newUser.setLocation(location);
         return userRepository.save(newUser);
     }
 
@@ -71,10 +73,11 @@ public class AuthService {
         userFound.setEmail(body.email());
         userFound.setPassword(bcrypt.encode(body.password()));
         userFound.setBorn(body.born());
+        userFound.setAddress(body.address());
+//      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
+        Municipality municipality = municipalityRepository.findById(body.municipalityId()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityId()));
+        userFound.setMunicipality(municipality);
         userFound.setImgProfile(body.urlImgProfile());
-//      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.locationId() != null) {}
-        Location location = locationService.getLocationById(body.locationId());
-        userFound.setLocation(location);
         return userRepository.save(userFound);
     }
 }

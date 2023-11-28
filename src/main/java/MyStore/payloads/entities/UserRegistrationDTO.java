@@ -1,6 +1,7 @@
 package MyStore.payloads.entities;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -33,6 +34,9 @@ public record UserRegistrationDTO(
                 """)
         String password,
         LocalDate born,
-        String urlImgProfile,
-        UUID locationId
+        @NotEmpty(message = "The address filed is mandatory")
+        String address,
+        @NotNull(message = "The municipality id is mandatory")
+        long municipalityId,
+        String urlImgProfile
 ) {}

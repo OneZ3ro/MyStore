@@ -1,6 +1,5 @@
 package MyStore.services;
 
-import MyStore.entities.Location;
 import MyStore.entities.User;
 import MyStore.exceptions.NotFoundException;
 import MyStore.payloads.entities.UserRegistrationDTO;
@@ -23,9 +22,6 @@ import java.util.UUID;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private LocationService locationService;
 
     @Autowired
     private Cloudinary cloudinary;
