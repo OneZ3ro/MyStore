@@ -47,7 +47,7 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(() ->  new NotFoundException(email));
     }
 
-    public String uploadAvatar(UUID userId, MultipartFile file) throws IOException {
+    public String uploadImgProfile(UUID userId, MultipartFile file) throws IOException {
         String urlImg = (String) cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
         User user = this.getUserById(userId);
         user.setImgProfile(urlImg);
