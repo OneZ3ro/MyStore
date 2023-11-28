@@ -32,6 +32,8 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private LocalDate born;
+    @ManyToOne
+    @JoinColumn(name = "municipalities_id")
     private Municipality municipality;
     private String address;
     @Column(name = "img_profile")
