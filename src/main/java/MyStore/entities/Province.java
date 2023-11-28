@@ -19,11 +19,13 @@ public class Province {
     private long provinceId;
     private String name;
     private String region;
+    private String sigla;
     @OneToMany(mappedBy = "province")
     private List<Municipality> municipalities;
 
-    public Province(String name, String region) {
+    public Province(String name, String region, String sigla) {
         this.name = name;
         this.region = region;
+        this.sigla =  sigla;
     }
 }

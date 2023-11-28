@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 
@@ -41,7 +40,7 @@ public class MyRunner implements CommandLineRunner {
                 System.out.println("Nome Provincia: " + row[0]);
                 System.out.println("Nome Regione: " + row[1]);
                 System.out.println("Sigla: " + row[2]);
-                Province province = new Province(row[0], row[1]);
+                Province province = new Province(row[0], row[1], row[2]);
                 provinceRepository.save(province);
             }
             while((lineMunicipality = readerMunicipalities.readLine()) != null) {
@@ -53,7 +52,7 @@ public class MyRunner implements CommandLineRunner {
                 Municipality municipality = new Municipality();
                 municipality.setName(row[1]);
                 municipality.setCap(row[5]);
-                municipality.setProvince(provinceRepository.findByName(row[2]).orElseThrow(() -> new NotFoundException("Province")));
+                municipality.setProvince(provinceRepository.findBySigla(row[2]).orElseThrow(() -> new NotFoundException("Province")));
                 municipalityRepository.save(municipality);
             }
         } catch (Exception exception) {
