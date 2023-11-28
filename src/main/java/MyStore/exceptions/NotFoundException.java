@@ -12,6 +12,6 @@ public class NotFoundException extends RuntimeException{
     }
 
     public NotFoundException(String email) {
-        super(email + " ' was not found. Please try again with another email");
+        super(email + " ' was not found. Please try again with another " + email);
     }
 }
