@@ -1,9 +1,8 @@
 package MyStore.runners;
 
-import MyStore.entities.Product;
-import MyStore.payloads.entities.ProductDTO;
+import MyStore.entities.Category;
 import MyStore.payloads.entities.ProductDatasetDTO;
-import MyStore.repositories.ProductRepository;
+import MyStore.repositories.CategoryRepository;
 import MyStore.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -14,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -22,6 +20,10 @@ import java.util.List;
 public class AddProductsRunner implements CommandLineRunner {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Override
     public void run(String... args) throws Exception {
         String productsDirectory = "src/main/java/MyStore/myfiles/Amazon_Products";
@@ -30,7 +32,7 @@ public class AddProductsRunner implements CommandLineRunner {
         String lineProduct = "";
         File folderProducts = new File(productsDirectory);
         File[] listOfFiles = folderProducts.listFiles();
-        List<String> listnameunder1000 = new ArrayList<>();
+        List<String> appMainSubList = new ArrayList<>();
         try {
             forloop:
             for (int i = 0; i < listOfFiles.length; i++) {
@@ -42,25 +44,11 @@ public class AddProductsRunner implements CommandLineRunner {
                     whileloop:
                     while ((lineProduct = readerProduct.readLine()) != null) {
                         String[] row = lineProduct.split("\"");
-                        if (counter > 1) {
-//                            String rowNumbRatings = row[6]+row[7];
-//                            String row8E9 = row[8]+row[9];
-//                            String row10e11 = row[10]+row[11];
-//                            System.out.println(rowNumbRatings);
-//                            System.out.println(row8E9);
-//                            System.out.println(row10e11);
-//
-//                            long discountedPriceIndia = Long.parseLong(row8E9.split("\"")[1].split("₹")[1]);
-//                            long actuallyPriceIndia = Long.parseLong(row10e11.split("\"")[1].split("₹")[1]);
-//                            double discountedPriceEuro = discountedPriceIndia * 0.011;
-//                            double actuallyPriceEuro = actuallyPriceIndia * 0.011;
-//                            System.out.println(discountedPriceEuro);
-//                            System.out.println(actuallyPriceEuro);
-//                            if (counter > 100 || fileBytes < 100) {
+                        if (counter >= 1 && fileBytes > 100) {
                             String name = row[1];
                             String[] row2 = row[2].split(",");
-                            String mainCategory = row2[1];
-                            String subCategory = row2[2];
+                            String mainCategoryName = row2[1];
+                            String subCategoryName = row2[2];
                             String image = row2[3];
                             double rating = Double.parseDouble(row2[5]);
                             String[] appNumbOfRating = row[3].split(",");
@@ -69,36 +57,44 @@ public class AddProductsRunner implements CommandLineRunner {
                             double discountPrice = Long.parseLong(appDiscountPrice[0]+appDiscountPrice[1]) * 0.011;
                             String[] appActualPrice = row[7].split("₹")[1].split(",");
                             double actualPrice = Long.parseLong(appActualPrice[0]+appActualPrice[1]) * 0.011;
-//                            System.out.println("name: " + name);
-//                            System.out.println("mainCategory: " + mainCategory);
-//                            System.out.println("subCategory: " + subCategory);
-//                            System.out.println("image: " + image);
-//                            System.out.println("rating: " + rating);
-//                            System.out.println("numbOfRating: " + numbOfRating);
-//                            System.out.println("discountPrice: " + discountPrice);
-//                            System.out.println("actualPrice: " + actualPrice);
-                            ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategory, subCategory, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
-                            productService.saveProductDataset(product);
-                            break forloop;
+                            if (counter <= 100) {
+                                ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategoryName, subCategoryName, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
+                                productService.saveProductDataset(product);
+                            }
+                            String nameMainSub = mainCategoryName + ","  + subCategoryName;
+                            if (appMainSubList.isEmpty()){
+                                appMainSubList.add(nameMainSub);
+                            } else {
+                                for (int j = 0; j < appMainSubList.size(); j++) {
+                                    if (!appMainSubList.get(j).equals(nameMainSub)) {
+                                        appMainSubList.add(nameMainSub);
+                                    }
+                                }
+                            }
                         }
                         counter++;
-                        }
-
-                    if (fileBytes < 100) {
-                        String[] fileNameSplitted = fileName.split("\\.");
-                        listnameunder1000.add(fileNameSplitted[0]);
                     }
-//                    if (i == listOfFiles.length - 1) {
-//                        listnameunder1000.forEach(System.out::println);
-//                        System.out.println(listnameunder1000.size());
-//                    }
-//                    if (fileName.equals("Refurbished and Open Box.csv")) {
-//                        System.out.println(fileBytes);
-//                    }
-//                    System.out.println(fileName + " primo prodotto: " + secondoElemento + "\nBytes: " + fileBytes);
-
                 } else if (listOfFiles[i].isDirectory()) {
                     System.out.println("Directory " + listOfFiles[i].getName());
+                }
+            }
+            for (int i = 0; i < appMainSubList.size(); i++) {
+                String[] appMain = appMainSubList.get(i).split(",");
+                List<String> appSub = new ArrayList<>();
+                for (int k = 0; k < appMainSubList.size(); k++) {
+                    String[] appMain2 = appMainSubList.get(k).split(",");
+                    if (appMain[0].equals(appMain2[0])) {
+                        appSub.add(appMain2[1]);
+                    }
+                }
+                if (i == 0) {
+                    Category category = new Category(appMain[0], appSub);
+                    categoryRepository.save(category);
+                } else {
+                    if (categoryRepository.findByMainCategoryName(appMain[0]).isEmpty()) {
+                        Category category = new Category(appMain[0], appSub);
+                        categoryRepository.save(category);
+                    }
                 }
             }
         } catch (Exception exception) {
