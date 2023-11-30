@@ -45,31 +45,90 @@ public class AddProductsRunner implements CommandLineRunner {
                     while ((lineProduct = readerProduct.readLine()) != null) {
                         String[] row = lineProduct.split("\"");
                         if (counter >= 1 && fileBytes > 100) {
-                            String name = row[1];
-                            String[] row2 = row[2].split(",");
-                            String mainCategoryName = row2[1];
-                            String subCategoryName = row2[2];
-                            String image = row2[3];
-                            double rating = Double.parseDouble(row2[5]);
-                            String[] appNumbOfRating = row[3].split(",");
-                            long numbOfRating = Long.parseLong(appNumbOfRating[0]+appNumbOfRating[1]);
-                            String[] appDiscountPrice = row[5].split("₹")[1].split(",");
-                            double discountPrice = Long.parseLong(appDiscountPrice[0]+appDiscountPrice[1]) * 0.011;
-                            String[] appActualPrice = row[7].split("₹")[1].split(",");
-                            double actualPrice = Long.parseLong(appActualPrice[0]+appActualPrice[1]) * 0.011;
-                            if (counter <= 100) {
-                                ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategoryName, subCategoryName, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
-                                productService.saveProductDataset(product);
-                            }
-                            String nameMainSub = mainCategoryName + ","  + subCategoryName;
-                            if (appMainSubList.isEmpty()){
-                                appMainSubList.add(nameMainSub);
-                            } else {
-                                for (int j = 0; j < appMainSubList.size(); j++) {
-                                    if (!appMainSubList.get(j).equals(nameMainSub)) {
-                                        appMainSubList.add(nameMainSub);
+                            System.out.println("length row: " + row.length);
+                            String name = "row[1]";
+                            String[] row2;
+                            String mainCategoryName = "";
+                            String subCategoryName = "";
+                            String image = "";
+                            double rating;
+                            String[] appNumbOfRating;
+                            long numbOfRating;
+                            String[] appDiscountPrice;
+                            double discountPrice;
+                            String[] appActualPrice;
+                            double actualPrice;
+                            String nameMainSub;
+
+                            switch (row.length) {
+                                case 8:
+                                    name = row[1];
+                                    row2 = row[2].split(",");
+                                    mainCategoryName = row2[1];
+                                    subCategoryName = row2[2];
+                                    image = row2[3];
+                                    if (row2.length == 6) {
+                                        rating = Double.parseDouble(row2[5]);
+                                        appNumbOfRating = row[3].split(",");
+                                        numbOfRating = Long.parseLong(appNumbOfRating[0]+appNumbOfRating[1]);
+                                    } else {
+                                        rating = 0.0;
+                                        numbOfRating = 0;
                                     }
-                                }
+                                    appDiscountPrice = row[5].split("₹")[1].split(",");
+                                    discountPrice = Long.parseLong(appDiscountPrice[0]+appDiscountPrice[1]) * 0.011;
+                                    appActualPrice = row[7].split("₹")[1].split(",");
+                                    actualPrice = Long.parseLong(appActualPrice[0]+appActualPrice[1]) * 0.011;
+                                    if (counter <= 100) {
+                                        ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategoryName, subCategoryName, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
+                                        productService.saveProductDataset(product);
+                                    }
+                                    nameMainSub = mainCategoryName + ","  + subCategoryName;
+                                    if (appMainSubList.isEmpty()){
+                                        appMainSubList.add(nameMainSub);
+                                    } else {
+                                        for (int j = 0; j < appMainSubList.size(); j++) {
+                                            if (!appMainSubList.get(j).equals(nameMainSub)) {
+                                                appMainSubList.add(nameMainSub);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 6:
+                                    name = row[1];
+                                    row2 = row[2].split(",");
+//                                    for (int k = 0; k < row2.length; k++) {
+//                                        System.out.println("row2= " + k + " - " + row2[k]);
+//                                    }
+                                    mainCategoryName = row2[1];
+                                    subCategoryName = row2[2];
+                                    image = row2[3];
+                                    if (row2.length == 7) {
+                                        rating = Double.parseDouble(row2[5]);
+                                        numbOfRating = Long.parseLong(row2[6]);
+                                    } else {
+                                        rating = 0.0;
+                                        numbOfRating = 0;
+                                    }
+                                    appDiscountPrice = row[3].split("₹")[1].split(",");
+                                    discountPrice = Long.parseLong(appDiscountPrice[0]+appDiscountPrice[1]) * 0.011;
+                                    appActualPrice = row[5].split("₹")[1].split(",");
+                                    actualPrice = Long.parseLong(appActualPrice[0]+appActualPrice[1]) * 0.011;
+                                    if (counter <= 100) {
+                                        ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategoryName, subCategoryName, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
+                                        productService.saveProductDataset(product);
+                                    }
+                                    nameMainSub = mainCategoryName + ","  + subCategoryName;
+                                    if (appMainSubList.isEmpty()){
+                                        appMainSubList.add(nameMainSub);
+                                    } else {
+                                        for (int j = 0; j < appMainSubList.size(); j++) {
+                                            if (!appMainSubList.get(j).equals(nameMainSub)) {
+                                                appMainSubList.add(nameMainSub);
+                                            }
+                                        }
+                                    }
+                                    break;
                             }
                         }
                         counter++;
