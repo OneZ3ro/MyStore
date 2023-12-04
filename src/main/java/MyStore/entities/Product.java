@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -31,6 +32,9 @@ public class Product {
     @Column(name = "actual_price")
     private double actualPrice;
     private String seller;
+    @ManyToOne
+    @JoinColumn(name = "user_seller_id", nullable = false)
+    private User userSeller;
 
     public Product(String name, String mainCategory, String subCategory, String image, double rating, long numbOfRating, double discountPrice, double actualPrice) {
         this.name = name;
@@ -43,8 +47,9 @@ public class Product {
         this.actualPrice = actualPrice;
     }
 
-    public Product(String name, String mainCategory, String subCategory, String image, double rating, long numbOfRating, double discountPrice, double actualPrice, String seller) {
+    public Product(String name, String mainCategory, String subCategory, String image, double rating, long numbOfRating, double discountPrice, double actualPrice, String seller, User userSeller) {
         this(name, mainCategory, subCategory, image, rating, numbOfRating, discountPrice, actualPrice);
         this.seller = seller;
+        this.userSeller = userSeller;
     }
 }

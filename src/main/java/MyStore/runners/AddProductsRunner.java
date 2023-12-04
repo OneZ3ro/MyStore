@@ -74,9 +74,9 @@ public class AddProductsRunner implements CommandLineRunner {
                                 if (!row[7].isEmpty()) {
                                     if (row[7].charAt(0) == '\"') {
                                         String[] appDiscountPrice = row[7].split("\"")[1].split("₹")[1].split(",");
-                                        discountPrice = Double.parseDouble(appDiscountPrice[0] + appDiscountPrice[1]) * 0.011;
+                                        discountPrice = Math.round((Double.parseDouble(appDiscountPrice[0] + appDiscountPrice[1]) * 0.011) * 100.0) / 100.0;
                                     } else {
-                                        discountPrice = Double.parseDouble(row[7].split("₹")[1]) * 0.011;
+                                        discountPrice = Math.round((Double.parseDouble(row[7].split("₹")[1]) * 0.011) * 100.0) / 100.0;
                                     }
                                 } else {
                                     discountPrice = 0.0;
@@ -84,9 +84,9 @@ public class AddProductsRunner implements CommandLineRunner {
                                 if (!row[8].isEmpty()) {
                                     if (row[8].charAt(0) == '\"') {
                                         String[] appActualPrice = row[8].split("\"")[1].split("₹")[1].split(",");
-                                        actualPrice = Double.parseDouble(appActualPrice[0] + appActualPrice[1]) * 0.011;
+                                        actualPrice = Math.round((Double.parseDouble(appActualPrice[0] + appActualPrice[1]) * 0.011) * 100.0) / 100.0;
                                     } else {
-                                        actualPrice = Double.parseDouble(row[8].split("₹")[1]) * 0.011;
+                                        actualPrice = Math.round((Double.parseDouble(row[8].split("₹")[1]) * 0.011) * 100.0) / 100.0;
                                     }
                                 } else {
                                     actualPrice = 0.0;

@@ -1,5 +1,6 @@
 package MyStore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties({"province"})
 public class Municipality {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -38,7 +38,12 @@ public class User implements UserDetails {
     private String address;
     @Column(name = "img_profile")
     private String imgProfile;
+    @Enumerated(EnumType.STRING)
     private List<Role> roles;
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+    @OneToMany(mappedBy = "userSeller")
+    private List<Product> products;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();

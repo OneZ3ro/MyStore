@@ -35,10 +35,10 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
-    @PutMapping("")
-    public Product saveProduct(@RequestBody @Validated ProductDTO body) {
+    @PostMapping("")
+    public Product saveProduct(@AuthenticationPrincipal User currentUser, @RequestBody @Validated ProductDTO body) {
         try {
-            return productService.saveProduct(body);
+            return productService.saveProduct(body, currentUser.getUserId());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,6 +1,7 @@
 package MyStore.payloads.entities;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ProductDTO(
@@ -13,7 +14,8 @@ public record ProductDTO(
         @NotEmpty(message = "The image field is mandatory")
         String image,
         double discountPrice,
-        @NotEmpty(message = "The price field is mandatory")
+        @NotNull(message = "The price field is mandatory")
         double actualPrice,
+        @NotEmpty(message = "The seller field is mandatory")
         String seller
 ) {}
