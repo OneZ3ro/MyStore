@@ -1,6 +1,7 @@
 package MyStore.runners;
 
 import MyStore.entities.Category;
+import MyStore.entities.Product;
 import MyStore.payloads.entities.ProductDatasetDTO;
 import MyStore.repositories.CategoryRepository;
 import MyStore.services.ProductService;
@@ -13,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -43,94 +45,67 @@ public class AddProductsRunner implements CommandLineRunner {
                     int counter = 0;
                     whileloop:
                     while ((lineProduct = readerProduct.readLine()) != null) {
-                        String[] row = lineProduct.split("\"");
+                        String[] row = lineProduct.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+                        System.out.println("Length row: " + row.length);
                         if (counter >= 1 && fileBytes > 100) {
-                            System.out.println("length row: " + row.length);
-                            String name = "row[1]";
-                            String[] row2;
-                            String mainCategoryName = "";
-                            String subCategoryName = "";
-                            String image = "";
-                            double rating;
-                            String[] appNumbOfRating;
-                            long numbOfRating;
-                            String[] appDiscountPrice;
-                            double discountPrice;
-                            String[] appActualPrice;
-                            double actualPrice;
-                            String nameMainSub;
-
-                            switch (row.length) {
-                                case 8:
-                                    name = row[1];
-                                    row2 = row[2].split(",");
-                                    mainCategoryName = row2[1];
-                                    subCategoryName = row2[2];
-                                    image = row2[3];
-                                    if (row2.length == 6) {
-                                        rating = Double.parseDouble(row2[5]);
-                                        appNumbOfRating = row[3].split(",");
-                                        numbOfRating = Long.parseLong(appNumbOfRating[0]+appNumbOfRating[1]);
+                            if (counter == 101) {
+                                break whileloop;
+                            }
+                            if (counter <= 100) {
+                                Arrays.stream(row).forEach(System.out::println);
+                                String name = row[0];
+                                String mainCategoryName = row[1];
+                                String subCategoryName = row[2];
+                                String image = row[3];
+                                double rating = row[5].isEmpty() ? 0.0 : Double.parseDouble(row[5]);
+                                long numbOfRating;
+                                double discountPrice;
+                                double actualPrice;
+                                if (!row[6].isEmpty()) {
+                                    if (row[6].charAt(0) == '\"') {
+                                        String[] appNumbOfRating = row[6].split("\"")[1].split(",");
+                                        numbOfRating = Long.parseLong(appNumbOfRating[0] + appNumbOfRating[1]);
                                     } else {
-                                        rating = 0.0;
-                                        numbOfRating = 0;
+                                        numbOfRating = Long.parseLong(row[6]);
                                     }
-                                    appDiscountPrice = row[5].split("₹")[1].split(",");
-                                    discountPrice = Long.parseLong(appDiscountPrice[0]+appDiscountPrice[1]) * 0.011;
-                                    appActualPrice = row[7].split("₹")[1].split(",");
-                                    actualPrice = Long.parseLong(appActualPrice[0]+appActualPrice[1]) * 0.011;
-                                    if (counter <= 100) {
-                                        ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategoryName, subCategoryName, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
-                                        productService.saveProductDataset(product);
-                                    }
-                                    nameMainSub = mainCategoryName + ","  + subCategoryName;
-                                    if (appMainSubList.isEmpty()){
-                                        appMainSubList.add(nameMainSub);
+                                } else {
+                                    numbOfRating = 0;
+                                }
+                                if (!row[7].isEmpty()) {
+                                    if (row[7].charAt(0) == '\"') {
+                                        String[] appDiscountPrice = row[7].split("\"")[1].split("₹")[1].split(",");
+                                        discountPrice = Double.parseDouble(appDiscountPrice[0] + appDiscountPrice[1]) * 0.011;
                                     } else {
-                                        for (int j = 0; j < appMainSubList.size(); j++) {
-                                            if (!appMainSubList.get(j).equals(nameMainSub)) {
-                                                appMainSubList.add(nameMainSub);
-                                            }
+                                        discountPrice = Double.parseDouble(row[7].split("₹")[1]) * 0.011;
+                                    }
+                                } else {
+                                    discountPrice = 0.0;
+                                }
+                                if (!row[8].isEmpty()) {
+                                    if (row[8].charAt(0) == '\"') {
+                                        String[] appActualPrice = row[8].split("\"")[1].split("₹")[1].split(",");
+                                        actualPrice = Double.parseDouble(appActualPrice[0] + appActualPrice[1]) * 0.011;
+                                    } else {
+                                        actualPrice = Double.parseDouble(row[8].split("₹")[1]) * 0.011;
+                                    }
+                                } else {
+                                    actualPrice = 0.0;
+                                }
+                                ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategoryName, subCategoryName, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
+                                productService.saveProductDataset(product);
+                                String nameMainSub = mainCategoryName + ","  + subCategoryName;
+                                if (appMainSubList.isEmpty()){
+                                    appMainSubList.add(nameMainSub);
+                                } else {
+                                    for (int j = 0; j < appMainSubList.size(); j++) {
+                                        if (!appMainSubList.get(j).equals(nameMainSub)) {
+                                            appMainSubList.add(nameMainSub);
                                         }
                                     }
-                                    break;
-                                case 6:
-                                    name = row[1];
-                                    row2 = row[2].split(",");
-//                                    for (int k = 0; k < row2.length; k++) {
-//                                        System.out.println("row2= " + k + " - " + row2[k]);
-//                                    }
-                                    mainCategoryName = row2[1];
-                                    subCategoryName = row2[2];
-                                    image = row2[3];
-                                    if (row2.length == 7) {
-                                        rating = Double.parseDouble(row2[5]);
-                                        numbOfRating = Long.parseLong(row2[6]);
-                                    } else {
-                                        rating = 0.0;
-                                        numbOfRating = 0;
-                                    }
-                                    appDiscountPrice = row[3].split("₹")[1].split(",");
-                                    discountPrice = Long.parseLong(appDiscountPrice[0]+appDiscountPrice[1]) * 0.011;
-                                    appActualPrice = row[5].split("₹")[1].split(",");
-                                    actualPrice = Long.parseLong(appActualPrice[0]+appActualPrice[1]) * 0.011;
-                                    if (counter <= 100) {
-                                        ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategoryName, subCategoryName, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
-                                        productService.saveProductDataset(product);
-                                    }
-                                    nameMainSub = mainCategoryName + ","  + subCategoryName;
-                                    if (appMainSubList.isEmpty()){
-                                        appMainSubList.add(nameMainSub);
-                                    } else {
-                                        for (int j = 0; j < appMainSubList.size(); j++) {
-                                            if (!appMainSubList.get(j).equals(nameMainSub)) {
-                                                appMainSubList.add(nameMainSub);
-                                            }
-                                        }
-                                    }
-                                    break;
+                                }
                             }
                         }
+                        System.out.println("Giro for: " + i + ", giro while: " + counter);
                         counter++;
                     }
                 } else if (listOfFiles[i].isDirectory()) {
