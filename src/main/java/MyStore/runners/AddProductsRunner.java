@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Order(2)
@@ -48,30 +49,35 @@ public class AddProductsRunner implements CommandLineRunner {
                         String[] row = lineProduct.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
                         System.out.println("Length row: " + row.length);
                         if (counter >= 1 && fileBytes > 100) {
-                            if (counter == 101) {
+                            if (counter == 11) {
                                 break whileloop;
                             }
-                            if (counter <= 100) {
+                            if (counter <= 10) {
                                 Arrays.stream(row).forEach(System.out::println);
                                 String name = row[0];
                                 String mainCategoryName = row[1];
                                 String subCategoryName = row[2];
                                 String image = row[3];
-                                double rating = row[5].isEmpty() ? 0.0 : Double.parseDouble(row[5]);
-                                long numbOfRating;
+                                double rating = 0.0;
+                                try {
+                                    rating = Double.parseDouble(row[5]);
+                                } catch (Exception exception) {
+
+                                }
+                                long numbOfRating = 0;
                                 double discountPrice;
                                 double actualPrice;
-                                if (!row[6].isEmpty()) {
+                                try {
                                     if (row[6].charAt(0) == '\"') {
                                         String[] appNumbOfRating = row[6].split("\"")[1].split(",");
                                         numbOfRating = Long.parseLong(appNumbOfRating[0] + appNumbOfRating[1]);
                                     } else {
                                         numbOfRating = Long.parseLong(row[6]);
                                     }
-                                } else {
-                                    numbOfRating = 0;
+                                } catch (Exception exception) {
+
                                 }
-                                if (!row[7].isEmpty()) {
+                                if (row.length >= 8 && !row[7].isEmpty()) {
                                     if (row[7].charAt(0) == '\"') {
                                         String[] appDiscountPrice = row[7].split("\"")[1].split("₹")[1].split(",");
                                         discountPrice = Math.round((Double.parseDouble(appDiscountPrice[0] + appDiscountPrice[1]) * 0.011) * 100.0) / 100.0;
@@ -81,7 +87,7 @@ public class AddProductsRunner implements CommandLineRunner {
                                 } else {
                                     discountPrice = 0.0;
                                 }
-                                if (!row[8].isEmpty()) {
+                                if (row.length >= 9 && !row[8].isEmpty()) {
                                     if (row[8].charAt(0) == '\"') {
                                         String[] appActualPrice = row[8].split("\"")[1].split("₹")[1].split(",");
                                         actualPrice = Math.round((Double.parseDouble(appActualPrice[0] + appActualPrice[1]) * 0.011) * 100.0) / 100.0;
@@ -111,6 +117,7 @@ public class AddProductsRunner implements CommandLineRunner {
                 } else if (listOfFiles[i].isDirectory()) {
                     System.out.println("Directory " + listOfFiles[i].getName());
                 }
+                TimeUnit.SECONDS.sleep(5);
             }
             for (int i = 0; i < appMainSubList.size(); i++) {
                 String[] appMain = appMainSubList.get(i).split(",");
