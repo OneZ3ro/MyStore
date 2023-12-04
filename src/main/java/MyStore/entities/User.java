@@ -43,7 +43,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
     @OneToMany(mappedBy = "userSeller")
-    private List<Product> products;
+    private List<Product> productSold;
+    @ManyToMany
+    @JoinTable(name = "favproducts_users", joinColumns = @JoinColumn(name = "products_id"), inverseJoinColumns = @JoinColumn(name = "users_id"))
+    private List<Product> favouriteProducts;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
