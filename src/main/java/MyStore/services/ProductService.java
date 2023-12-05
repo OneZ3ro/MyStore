@@ -10,6 +10,7 @@ import MyStore.payloads.entities.ProductDTO;
 import MyStore.payloads.entities.ProductDatasetDTO;
 import MyStore.payloads.entities.UserRegistrationDTO;
 import MyStore.repositories.ProductRepository;
+import MyStore.repositories.SubCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -24,13 +25,14 @@ import java.util.UUID;
 
 @Service
 public class ProductService {
-    @Value("${defaultUserId}")
-    private String defaultUserId;
     @Autowired
     private ProductRepository productRepository;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SubCategoryService subCategoryService;
 
     public Page<Product> getProducts (int page, int size, String orderBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
@@ -48,42 +50,43 @@ public class ProductService {
     public Product saveProduct(ProductDTO body, UUID userId) throws IOException {
         Product newProduct = new Product();
         newProduct.setName(body.name());
-        newProduct.setMainCategory(body.mainCategory());
-        newProduct.setSubCategory(body.subCategory());
-        newProduct.setImage(body.image());
-        newProduct.setDiscountPrice(body.discountPrice());
-        newProduct.setActualPrice(body.actualPrice());
+        newProduct.setImgUrl(body.imgUrl());
+        newProduct.setPrice(body.price() != 0.0 ? body.price() : body.listPrice());
+        newProduct.setListPrice(body.listPrice());
+        newProduct.setBestSeller(false);
         newProduct.setSeller(body.seller());
-        User user = userService.getUserById(userId);
-        newProduct.setUserSeller(user);
+        newProduct.setSubCategory(subCategoryService.getSubCategoryByName(body.subCategory()));
+        newProduct.setUserSeller(userService.getUserById(userId));
         return productRepository.save(newProduct);
     }
 
-    public void saveProductDataset(ProductDatasetDTO body) throws IOException {
-        Product newProduct = new Product();
-        newProduct.setName(body.name());
-        newProduct.setMainCategory(body.mainCategory());
-        newProduct.setSubCategory(body.subCategory());
-        newProduct.setImage(body.image());
-        newProduct.setRating(body.rating());
-        newProduct.setNumbOfRating(body.numbOfRating());
-        newProduct.setDiscountPrice(body.discountPrice());
-        newProduct.setActualPrice(body.actualPrice());
-        newProduct.setSeller(body.seller());
-        User user = userService.getUserById(UUID.fromString(defaultUserId));
-        newProduct.setUserSeller(user);
-        productRepository.save(newProduct);
-    }
+//    public void saveProductDataset(ProductDatasetDTO body) {
+//        Product newProduct = new Product();
+//        newProduct.setName(body.name());
+//        newProduct.setImgUrl(body.imgUrl());
+//        newProduct.setStars(body.starts());
+//        newProduct.setReviews(body.reviews());
+//        newProduct.setPrice(body.price() != 0.0 ? body.price() : body.listPrice());
+//        newProduct.setListPrice(body.listPrice());
+//        newProduct.setSubCategory(subCategoryService.getSubCategoryByName(body.subCategory()));
+//        newProduct.setBestSeller(body.bestSeller());
+//        newProduct.setBoughtInLastMonth(body.boughtInLastMonth());
+//        newProduct.setSeller(body.seller());
+//        newProduct.setUserSeller(userService.getUserById(UUID.fromString(defaultUserId)));
+//        productRepository.save(newProduct);
+//    }
 
-    public Product updateProductById (UUID userId, ProductDTO body) throws NotFoundException {
-        Product userFound = this.getProductById(userId);
-        userFound.setName(body.name());
-        userFound.setMainCategory(body.mainCategory());
-        userFound.setSubCategory(body.subCategory());
-        userFound.setImage(body.image());
-        userFound.setDiscountPrice(body.discountPrice());
-        userFound.setActualPrice(body.actualPrice());
-        userFound.setSeller(body.seller());
-        return productRepository.save(userFound);
+    public Product updateProductById (UUID productId, ProductDTO body) throws NotFoundException {
+        Product productFound = this.getProductById(productId);
+        productFound.setName(body.name());
+        productFound.setSeller(body.seller());
+        productFound.setName(body.name());
+        productFound.setImgUrl(body.imgUrl());
+        productFound.setPrice(body.price() != 0.0 ? body.price() : body.listPrice());
+        productFound.setListPrice(body.listPrice());
+        productFound.setSeller(body.seller());
+        productFound.setSubCategory(subCategoryService.getSubCategoryByName(body.subCategory()));
+        productFound.setUserSeller(userService.getUserById(body.userSeller()));
+        return productRepository.save(productFound);
     }
 }

@@ -19,36 +19,35 @@ public class Product {
     @Column(name = "products_id")
     private UUID productId;
     private String name;
-    @Column(name = "main_category")
-    private String mainCategory;
-    @Column(name = "sub_category")
-    private String subCategory;
-    private String image;
-    private double rating;
-    @Column(name = "numb_of_rating")
-    private long numbOfRating;
-    @Column(name = "discount_price")
-    private double discountPrice;
-    @Column(name = "actual_price")
-    private double actualPrice;
+    @Column(name = "img_url")
+    private String imgUrl;
+    private double stars;
+    private long reviews;
+    private double price;
+    @Column(name = "list_price")
+    private double listPrice;
+    @ManyToOne
+    @JoinColumn(name = "sub_category_id", nullable = false)
+    private SubCategory subCategory;
+    @Column(name = "best_seller")
+    private boolean bestSeller;
+    @Column(name = "bought_in_last_month")
+    private long boughtInLastMonth;
     private String seller;
     @ManyToOne
     @JoinColumn(name = "user_seller_id", nullable = false)
     private User userSeller;
 
-    public Product(String name, String mainCategory, String subCategory, String image, double rating, long numbOfRating, double discountPrice, double actualPrice) {
+    public Product(String name, String imgUrl, double stars, long reviews, double price, double listPrice, SubCategory subCategory, boolean bestSeller, long boughtInLastMonth, String seller, User userSeller) {
         this.name = name;
-        this.mainCategory = mainCategory;
+        this.imgUrl = imgUrl;
+        this.stars = stars;
+        this.reviews = reviews;
+        this.price = price;
+        this.listPrice = listPrice;
         this.subCategory = subCategory;
-        this.image = image;
-        this.rating = rating;
-        this.numbOfRating = numbOfRating;
-        this.discountPrice = discountPrice;
-        this.actualPrice = actualPrice;
-    }
-
-    public Product(String name, String mainCategory, String subCategory, String image, double rating, long numbOfRating, double discountPrice, double actualPrice, String seller, User userSeller) {
-        this(name, mainCategory, subCategory, image, rating, numbOfRating, discountPrice, actualPrice);
+        this.bestSeller = bestSeller;
+        this.boughtInLastMonth = boughtInLastMonth;
         this.seller = seller;
         this.userSeller = userSeller;
     }

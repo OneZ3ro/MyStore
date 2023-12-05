@@ -1,147 +1,101 @@
 package MyStore.runners;
 
-import MyStore.entities.Category;
+import MyStore.entities.MainCategory;
 import MyStore.entities.Product;
-import MyStore.payloads.entities.ProductDatasetDTO;
-import MyStore.repositories.CategoryRepository;
+import MyStore.entities.SubCategory;
+import MyStore.entities.User;
+import MyStore.enums.Role;
+import MyStore.exceptions.NotFoundException;
+import MyStore.repositories.MunicipalityRepository;
+import MyStore.repositories.ProductRepository;
+import MyStore.repositories.UserRepository;
+import MyStore.services.MainCategoryService;
 import MyStore.services.ProductService;
+import MyStore.services.SubCategoryService;
+import MyStore.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Component
-@Order(2)
+@Order(3)
 public class AddProductsRunner implements CommandLineRunner {
-    @Autowired
-    private ProductService productService;
+    @Value("${my.secret.password}")
+    private String mySecretPassword;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private MainCategoryService mainCategoryService;
+
+    @Autowired
+    private SubCategoryService subCategoryService;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private MunicipalityRepository municipalityRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        String productsDirectory = "src/main/java/MyStore/myfiles/Amazon_Products";
-        String defaultSeller = "Amazon";
-        BufferedReader readerProduct = null;
-        String lineProduct = "";
-        File folderProducts = new File(productsDirectory);
-        File[] listOfFiles = folderProducts.listFiles();
-        List<String> appMainSubList = new ArrayList<>();
-        try {
-            forloop:
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].isFile()) {
-                    String fileName = listOfFiles[i].getName();
-                    long fileBytes = listOfFiles[i].length();
-                    readerProduct = new BufferedReader(new FileReader(productsDirectory + "\\" + fileName));
-                    int counter = 0;
-                    whileloop:
-                    while ((lineProduct = readerProduct.readLine()) != null) {
+        if (productRepository.findAll().isEmpty()) {
+            User user = createDefaultUser();
+            String fileProduct = "src/main/java/MyStore/myfiles/all_products.csv";
+            String defaultSeller = "MyStore";
+            BufferedReader readerProduct = new BufferedReader(new FileReader(fileProduct));
+            String lineProduct = "";
+            int counterProduct = 0;
+            try {
+                while ((lineProduct = readerProduct.readLine()) != null) {
+                    if (counterProduct >= 1) {
                         String[] row = lineProduct.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
-                        System.out.println("Length row: " + row.length);
-                        if (counter >= 1 && fileBytes > 100) {
-                            if (counter == 11) {
-                                break whileloop;
-                            }
-                            if (counter <= 10) {
-                                Arrays.stream(row).forEach(System.out::println);
-                                String name = row[0];
-                                String mainCategoryName = row[1];
-                                String subCategoryName = row[2];
-                                String image = row[3];
-                                double rating = 0.0;
-                                try {
-                                    rating = Double.parseDouble(row[5]);
-                                } catch (Exception exception) {
-
-                                }
-                                long numbOfRating = 0;
-                                double discountPrice;
-                                double actualPrice;
-                                try {
-                                    if (row[6].charAt(0) == '\"') {
-                                        String[] appNumbOfRating = row[6].split("\"")[1].split(",");
-                                        numbOfRating = Long.parseLong(appNumbOfRating[0] + appNumbOfRating[1]);
-                                    } else {
-                                        numbOfRating = Long.parseLong(row[6]);
-                                    }
-                                } catch (Exception exception) {
-
-                                }
-                                if (row.length >= 8 && !row[7].isEmpty()) {
-                                    if (row[7].charAt(0) == '\"') {
-                                        String[] appDiscountPrice = row[7].split("\"")[1].split("₹")[1].split(",");
-                                        discountPrice = Math.round((Double.parseDouble(appDiscountPrice[0] + appDiscountPrice[1]) * 0.011) * 100.0) / 100.0;
-                                    } else {
-                                        discountPrice = Math.round((Double.parseDouble(row[7].split("₹")[1]) * 0.011) * 100.0) / 100.0;
-                                    }
-                                } else {
-                                    discountPrice = 0.0;
-                                }
-                                if (row.length >= 9 && !row[8].isEmpty()) {
-                                    if (row[8].charAt(0) == '\"') {
-                                        String[] appActualPrice = row[8].split("\"")[1].split("₹")[1].split(",");
-                                        actualPrice = Math.round((Double.parseDouble(appActualPrice[0] + appActualPrice[1]) * 0.011) * 100.0) / 100.0;
-                                    } else {
-                                        actualPrice = Math.round((Double.parseDouble(row[8].split("₹")[1]) * 0.011) * 100.0) / 100.0;
-                                    }
-                                } else {
-                                    actualPrice = 0.0;
-                                }
-                                ProductDatasetDTO product = new ProductDatasetDTO(name, mainCategoryName, subCategoryName, image, rating, numbOfRating, discountPrice, actualPrice, defaultSeller);
-                                productService.saveProductDataset(product);
-                                String nameMainSub = mainCategoryName + ","  + subCategoryName;
-                                if (appMainSubList.isEmpty()){
-                                    appMainSubList.add(nameMainSub);
-                                } else {
-                                    for (int j = 0; j < appMainSubList.size(); j++) {
-                                        if (!appMainSubList.get(j).equals(nameMainSub)) {
-                                            appMainSubList.add(nameMainSub);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        System.out.println("Giro for: " + i + ", giro while: " + counter);
-                        counter++;
+                        Product product = new Product();
+                        product.setName(row[1].split("\"").length > 1 ? row[1].split("\"")[1] : row[1]);
+                        product.setImgUrl(row[2]);
+                        product.setStars(Double.parseDouble(row[4]));
+                        product.setReviews(Long.parseLong(row[5]));
+                        product.setPrice(Double.parseDouble(row[6]));
+                        product.setListPrice(Double.parseDouble(row[7]) != 0.0 ? Double.parseDouble(row[7]) : Double.parseDouble(row[6]));
+                        product.setSubCategory(subCategoryService.getSubCategoryById(Long.parseLong(row[8])));
+                        product.setBestSeller(Boolean.parseBoolean(row[9].toLowerCase()));
+                        product.setBoughtInLastMonth(Long.parseLong(row[10]));
+                        product.setSeller(defaultSeller);
+                        product.setUserSeller(user);
+                        productRepository.save(product);
                     }
-                } else if (listOfFiles[i].isDirectory()) {
-                    System.out.println("Directory " + listOfFiles[i].getName());
+                    counterProduct++;
                 }
-                TimeUnit.SECONDS.sleep(5);
+                System.out.println("Products created successfully ✔️");
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            } finally {
+                readerProduct.close();
             }
-            for (int i = 0; i < appMainSubList.size(); i++) {
-                String[] appMain = appMainSubList.get(i).split(",");
-                List<String> appSub = new ArrayList<>();
-                for (int k = 0; k < appMainSubList.size(); k++) {
-                    String[] appMain2 = appMainSubList.get(k).split(",");
-                    if (appMain[0].equals(appMain2[0])) {
-                        appSub.add(appMain2[1]);
-                    }
-                }
-                if (i == 0) {
-                    Category category = new Category(appMain[0], appSub);
-                    categoryRepository.save(category);
-                } else {
-                    if (categoryRepository.findByMainCategoryName(appMain[0]).isEmpty()) {
-                        Category category = new Category(appMain[0], appSub);
-                        categoryRepository.save(category);
-                    }
-                }
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        } finally {
-            readerProduct.close();
+        } else {
+            System.out.println("⚠️ Products already uploaded ⚠️");
         }
+    }
+
+    public User createDefaultUser() {
+        User user = new User();
+        user.setName("Angelo");
+        user.setSurname("Moreno");
+        user.setUsername("AngMor");
+        user.setEmail("angmor@gmail.com");
+        user.setPassword(mySecretPassword);
+        user.setBorn(LocalDate.parse("2002-01-01"));
+        user.setMunicipality(municipalityRepository.findByCap("20900").orElseThrow(() -> new NotFoundException("Cap", "20900")));
+        user.setAddress("Via a caso, 13");
+        user.setRoles(Arrays.asList(Role.USER, Role.ADMIN));
+        return userRepository.save(user);
     }
 }

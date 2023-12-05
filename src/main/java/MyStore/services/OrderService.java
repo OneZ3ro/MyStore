@@ -41,7 +41,7 @@ public class OrderService {
         newOrder.setProducts(body.products());
         double total = 0;
         for (int i = 0; i < body.products().size(); i++) {
-            total += body.products().get(i).getDiscountPrice() != 0.0 ? body.products().get(i).getDiscountPrice() : body.products().get(i).getActualPrice();
+            total += body.products().get(i).getPrice();
         }
         newOrder.setTotal(total);
         newOrder.setDateOfOrder(LocalDate.now());
