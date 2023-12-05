@@ -25,28 +25,36 @@ public class AddProvincesAndMunicipalitiesRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (provinceRepository.findAll().isEmpty() && municipalityRepository.findAll().isEmpty()) {
-            String fileProvinces = "src/main/java/MyStore/myfiles\\provincia_regione_sigla.csv";
-            String fileMunicipalities = "src/main/java/MyStore/myfiles\\listacomuni.csv";
+            String fileProvinces = "src/main/java/MyStore/myfiles/provincia_regione_sigla.csv";
+            String fileMunicipalities = "src/main/java/MyStore/myfiles/listacomuni.csv";
             BufferedReader readerProvinces = null;
             BufferedReader readerMunicipalities = null;
             String lineProvince = "";
             String lineMunicipality = "";
+            long counterProvince = 0;
+            long counterMunicipality = 0;
             try {
                 readerProvinces = new BufferedReader(new FileReader(fileProvinces));
                 readerMunicipalities = new BufferedReader(new FileReader(fileMunicipalities));
                 while ((lineProvince = readerProvinces.readLine()) != null) {
-                    String[] row = lineProvince.split(";");
-                    Province province = new Province(row[0], row[1], row[2]);
-                    provinceRepository.save(province);
+                    if (counterProvince >= 1) {
+                        String[] row = lineProvince.split(";");
+                        Province province = new Province(row[0], row[1], row[2]);
+                        provinceRepository.save(province);
+                    }
+                    counterProvince++;
                 }
                 System.out.println("Provinces created successfully ✔️");
                 while ((lineMunicipality = readerMunicipalities.readLine()) != null) {
-                    String[] row = lineMunicipality.split(";");
-                    Municipality municipality = new Municipality();
-                    municipality.setName(row[1]);
-                    municipality.setCap(row[5]);
-                    municipality.setProvince(provinceRepository.findBySigla(row[2]).orElseThrow(() -> new NotFoundException("Province")));
-                    municipalityRepository.save(municipality);
+                    if (counterMunicipality >= 1) {
+                        String[] row = lineMunicipality.split(";");
+                        Municipality municipality = new Municipality();
+                        municipality.setCap(row[0]);
+                        municipality.setName(row[1]);
+                        municipality.setProvince(provinceRepository.findBySigla(row[2]).orElseThrow(() -> new NotFoundException("Province")));
+                        municipalityRepository.save(municipality);
+                    }
+                    counterMunicipality++;
                 }
                 System.out.println("Municipalities created successfully ✔️");
             } catch (Exception exception) {
