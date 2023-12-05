@@ -55,6 +55,7 @@ public class AddMainAndSubCategoriesRunner implements CommandLineRunner {
                 exception.printStackTrace();
             } finally {
                 readerMainCategory.close();
+                readerSubCategory.close();
             }
         } else {
             System.out.println("⚠️ MainCategories and SubCategories already uploaded ⚠️");
