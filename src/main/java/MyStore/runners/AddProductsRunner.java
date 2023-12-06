@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -44,6 +45,9 @@ public class AddProductsRunner implements CommandLineRunner {
 
     @Autowired
     private MunicipalityRepository municipalityRepository;
+
+    @Autowired
+    private PasswordEncoder bcrypt;
 
     @Override
     public void run(String... args) throws Exception {
@@ -91,7 +95,7 @@ public class AddProductsRunner implements CommandLineRunner {
         user.setSurname("Moreno");
         user.setUsername("AngMor");
         user.setEmail("angmor@gmail.com");
-        user.setPassword(mySecretPassword);
+        user.setPassword(bcrypt.encode(mySecretPassword));
         user.setBorn(LocalDate.parse("2002-01-01"));
         user.setMunicipality(municipalityRepository.findByCap("20900").orElseThrow(() -> new NotFoundException("Cap", "20900")));
         user.setAddress("Via a caso, 13");

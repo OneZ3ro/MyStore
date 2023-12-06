@@ -31,7 +31,6 @@ import java.util.UUID;
                 throw new UnauthorizedException("Please pass the Bearer Token in the Authorization header");
             } else {
                 String token = authHeader.substring(7);
-                System.out.println("TOKEN -> " + token);
                 jwtTools.verifyToken(token);
                 String id = jwtTools.extractIdFromToken(token);
                 User currentUser = usersService.getUserById(UUID.fromString(id));

@@ -25,7 +25,7 @@ public class AddProvincesAndMunicipalitiesRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (provinceRepository.findAll().isEmpty() && municipalityRepository.findAll().isEmpty()) {
-            String fileProvinces = "src/main/java/MyStore/myfiles/provincia_regione_sigla.csv";
+            String fileProvinces = "src/main/java/MyStore/myfiles/province-italiane.csv";
             String fileMunicipalities = "src/main/java/MyStore/myfiles/listacomuni.csv";
             BufferedReader readerProvinces = null;
             BufferedReader readerMunicipalities = null;
@@ -39,7 +39,7 @@ public class AddProvincesAndMunicipalitiesRunner implements CommandLineRunner {
                 while ((lineProvince = readerProvinces.readLine()) != null) {
                     if (counterProvince >= 1) {
                         String[] row = lineProvince.split(";");
-                        Province province = new Province(row[0], row[1], row[2]);
+                        Province province = new Province(row[1], row[2], row[0]);
                         provinceRepository.save(province);
                     }
                     counterProvince++;
@@ -49,9 +49,9 @@ public class AddProvincesAndMunicipalitiesRunner implements CommandLineRunner {
                     if (counterMunicipality >= 1) {
                         String[] row = lineMunicipality.split(";");
                         Municipality municipality = new Municipality();
-                        municipality.setCap(row[0]);
-                        municipality.setName(row[1]);
-                        municipality.setProvince(provinceRepository.findBySigla(row[2]).orElseThrow(() -> new NotFoundException("Province")));
+                        municipality.setCap(row[5]);
+                        municipality.setName(row[9]);
+                        municipality.setProvince(provinceRepository.findBySigla(row[2]).orElseThrow(() -> new NotFoundException("Province", row[2])));
                         municipalityRepository.save(municipality);
                     }
                     counterMunicipality++;
