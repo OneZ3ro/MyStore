@@ -1,5 +1,6 @@
 package MyStore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties({"subCategoryNames"})
 public class MainCategory {
     @Id
     @Column(name = "main_categories_id")
