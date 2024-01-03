@@ -6,16 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
-public record UserRegistrationDTO(
-//        Fields: name, surname, username, email, password, born, urlImgProfile, locationId
-        @NotEmpty(message = "The name field is mandatory")
-        @Size(min = 3, max = 20, message = "The name must be min 3 and max 20 length")
-        String name,
-        @NotEmpty(message = "The surname field is mandatory")
-        @Size(min = 3, max = 30, message = "The surname must be min 3 and max 30 length")
-        String surname,
+public record UserRegistration1DTO(
         @NotEmpty(message = "The username field is mandatory")
         @Size(min = 2, max = 16, message = "The username must be min 2 and max 16 length")
         String username,
@@ -32,11 +24,5 @@ public record UserRegistrationDTO(
                 - Contains at least one char within a set of special chars (@#%$^ etc.)
                 - Does not contain space, tab, etc...
                 """)
-        String password,
-        LocalDate born,
-        @NotEmpty(message = "The address filed is mandatory")
-        String address,
-        @NotEmpty(message = "The municipality name is mandatory")
-        String municipalityName,
-        String urlImgProfile
+        String password
 ) {}

@@ -4,6 +4,7 @@ import MyStore.entities.User;
 import MyStore.exceptions.BadRequestException;
 import MyStore.payloads.entities.UserLoginDTO;
 import MyStore.payloads.entities.UserLoginSuccessDTO;
+import MyStore.payloads.entities.UserRegistration1DTO;
 import MyStore.payloads.entities.UserRegistrationDTO;
 import MyStore.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public User registerUser(@RequestBody @Validated UserRegistrationDTO body, BindingResult validation) {
+    public User registerUser(@RequestBody @Validated UserRegistration1DTO body, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestException(validation.getAllErrors());
         } else {

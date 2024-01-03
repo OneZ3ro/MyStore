@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ProvinceRepository extends JpaRepository<Province, Long> {
     Optional<Province> findBySigla(String sigla);
+    Optional<Province> findByName(String name);
 }

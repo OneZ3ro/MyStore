@@ -97,7 +97,7 @@ public class AddProductsRunner implements CommandLineRunner {
         user.setEmail("angmor@gmail.com");
         user.setPassword(bcrypt.encode(mySecretPassword));
         user.setBorn(LocalDate.parse("2002-01-01"));
-        user.setMunicipality(municipalityRepository.findByCap("20900").orElseThrow(() -> new NotFoundException("Cap", "20900")));
+        user.setMunicipality(municipalityRepository.findByCap("20900").orElseThrow(() -> new NotFoundException("Cap", "20900")).stream().filter(municipality -> municipality.getName().equals("Monza")).toList().get(0));
         user.setAddress("Via a caso, 13");
         user.setRoles(Arrays.asList(Role.USER, Role.ADMIN));
         return userRepository.save(user);

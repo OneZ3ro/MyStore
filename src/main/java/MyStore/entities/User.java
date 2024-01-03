@@ -43,11 +43,11 @@ public class User implements UserDetails {
     private String imgProfile;
     @Enumerated(EnumType.STRING)
     private List<Role> roles;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Order> orders;
-    @OneToMany(mappedBy = "userSeller")
+    @OneToMany(mappedBy = "userSeller", fetch = FetchType.EAGER)
     private List<Product> productSold;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "favproducts_users", joinColumns = @JoinColumn(name = "products_id"), inverseJoinColumns = @JoinColumn(name = "users_id"))
     private List<Product> favouriteProducts;
     @Override

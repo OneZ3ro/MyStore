@@ -7,6 +7,7 @@ import MyStore.exceptions.BadRequestException;
 import MyStore.exceptions.NotFoundException;
 import MyStore.exceptions.UnauthorizedException;
 import MyStore.payloads.entities.UserLoginDTO;
+import MyStore.payloads.entities.UserRegistration1DTO;
 import MyStore.payloads.entities.UserRegistrationDTO;
 import MyStore.repositories.MunicipalityRepository;
 import MyStore.repositories.UserRepository;
@@ -45,22 +46,22 @@ public class AuthService {
         }
     }
 
-    public User registerUser(UserRegistrationDTO body) throws IOException {
+    public User registerUser(UserRegistration1DTO body) throws IOException {
         userRepository.findByEmail(body.email()).ifPresent( user -> {
             throw new BadRequestException("Email " + user.getEmail() + " has already been used. Please try with another email");
         });
         User newUser = new User();
-        newUser.setName(body.name());
-        newUser.setSurname(body.surname());
+//        newUser.setName(body.name());
+//        newUser.setSurname(body.surname());
         newUser.setUsername(body.username());
         newUser.setEmail(body.email());
         newUser.setPassword(bcrypt.encode(body.password()));
-        newUser.setBorn(body.born());
-        newUser.setAddress(body.address());
-//      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
-        Municipality municipality = municipalityRepository.findById(body.municipalityId()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityId()));
-        newUser.setMunicipality(municipality);
-        newUser.setImgProfile(body.urlImgProfile());
+//        newUser.setBorn(body.born());
+//        newUser.setAddress(body.address());
+////      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
+//        Municipality municipality = municipalityRepository.findById(body.municipalityId()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityId()));
+//        newUser.setMunicipality(municipality);
+//        newUser.setImgProfile(body.urlImgProfile());
         newUser.setRoles(Arrays.asList(Role.USER));
         return userRepository.save(newUser);
     }
@@ -75,7 +76,7 @@ public class AuthService {
         userFound.setBorn(body.born());
         userFound.setAddress(body.address());
 //      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
-        Municipality municipality = municipalityRepository.findById(body.municipalityId()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityId()));
+        Municipality municipality = municipalityRepository.findByName(body.municipalityName()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityName()));
         userFound.setMunicipality(municipality);
         userFound.setImgProfile(body.urlImgProfile());
         return userRepository.save(userFound);
