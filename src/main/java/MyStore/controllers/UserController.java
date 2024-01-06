@@ -3,6 +3,7 @@ package MyStore.controllers;
 import MyStore.entities.Order;
 import MyStore.entities.User;
 import MyStore.payloads.entities.OrderDTO;
+import MyStore.payloads.entities.UserDTO;
 import MyStore.payloads.entities.UserRegistrationDTO;
 import MyStore.services.AuthService;
 import MyStore.services.OrderService;
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public UserDetails updateProfileUser(@AuthenticationPrincipal User currentUser, @RequestBody @Validated UserRegistrationDTO body) {
+    public UserDTO updateProfileUser(@AuthenticationPrincipal User currentUser, @RequestBody @Validated UserRegistrationDTO body) {
         return authService.updateUserById(currentUser.getUserId(), body);
     }
 

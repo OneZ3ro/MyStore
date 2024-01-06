@@ -1,11 +1,13 @@
 package MyStore.services;
 
 import MyStore.entities.Municipality;
+import MyStore.entities.Province;
 import MyStore.entities.User;
 import MyStore.enums.Role;
 import MyStore.exceptions.BadRequestException;
 import MyStore.exceptions.NotFoundException;
 import MyStore.exceptions.UnauthorizedException;
+import MyStore.payloads.entities.UserDTO;
 import MyStore.payloads.entities.UserLoginDTO;
 import MyStore.payloads.entities.UserRegistration1DTO;
 import MyStore.payloads.entities.UserRegistrationDTO;
@@ -66,19 +68,31 @@ public class AuthService {
         return userRepository.save(newUser);
     }
 
-    public User updateUserById (UUID userId, UserRegistrationDTO body) throws NotFoundException {
+    public UserDTO updateUserById (UUID userId, UserRegistrationDTO body) throws NotFoundException {
         User userFound = userService.getUserById(userId);
-        userFound.setName(body.name());
-        userFound.setSurname(body.surname());
-        userFound.setUsername(body.username());
-        userFound.setEmail(body.email());
-        userFound.setPassword(bcrypt.encode(body.password()));
-        userFound.setBorn(body.born());
-        userFound.setAddress(body.address());
+            userFound.setName(body.name());
+            userFound.setSurname(body.surname());
+            userFound.setUsername(body.username());
+            userFound.setEmail(body.email());
+//        userFound.setPassword(bcrypt.encode(body.password()));
+            userFound.setBorn(body.born());
+            userFound.setAddress(body.address());
 //      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
-        Municipality municipality = municipalityRepository.findByName(body.municipalityName()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityName()));
-        userFound.setMunicipality(municipality);
-        userFound.setImgProfile(body.urlImgProfile());
-        return userRepository.save(userFound);
+            Municipality municipality = municipalityRepository.findByName(body.municipalityName()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityName()));
+        Province province = municipalityRepository.findById(municipality.getMunicipalityId()).orElseThrow(() -> new NotFoundException("municipalityId")).getProvince();
+            userFound.setMunicipality(municipality);
+            userFound.setImgProfile(body.urlImgProfile());
+
+        if(body.newPassword() == null) {
+            userRepository.save(userFound);
+        } else {
+            if (bcrypt.matches(body.oldPassword(), userFound.getPassword())) {
+                userFound.setPassword(bcrypt.encode(body.newPassword()));
+                userRepository.save(userFound);
+            } else {
+                throw new UnauthorizedException("Invalid credentials");
+            }
+        }
+        return new UserDTO(body.name(), body.surname(), body.born(), province.getRegion(), province.getName(), province.getSigla(), municipality.getCap(), municipality.getName(), municipality.getMunicipalityId(), body.address().split(",")[0], Long.parseLong(body.address().split(", ")[1]), body.username(), body.email());
     }
 }

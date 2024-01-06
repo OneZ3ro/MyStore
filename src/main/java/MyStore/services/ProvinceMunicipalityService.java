@@ -37,6 +37,10 @@ public class ProvinceMunicipalityService {
         return provinceRepository.findByName(provinceName).orElseThrow(() -> new NotFoundException("provice name")).getSigla();
     }
 
+    public Province getProvinceObjByMunId(long municipalityId) throws NotFoundException {
+        return municipalityRepository.findById(municipalityId).orElseThrow(() -> new NotFoundException("municipalityId")).getProvince();
+    }
+
     public Set<String> getCapsBySigla(String sigla) throws NotFoundException {
         Set<String> caps = new TreeSet<>();
         String fileMunicipalities = "src/main/java/MyStore/myfiles/listacomuni.csv";

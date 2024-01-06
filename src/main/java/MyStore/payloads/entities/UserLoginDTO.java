@@ -8,13 +8,13 @@ public record UserLoginDTO(
         @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "The email entered is invalid")
         String email,
         @NotEmpty(message = "The password field is mandatory")
-        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,16}$", message = """
+        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_+~]).{8,32}$", message = """
                 The password must:
-                - Be min 8 and max 16 length
+                - Be min 8 and max 32 length
                 - Contains at least one digit
                 - Contains at least one lower alpha char
                 - Contains at least one upper alpha char
-                - Contains at least one char within a set of special chars (@#%$^ etc.)
+                - Contains at least one char within a set of special chars (!@#$%^&*_+~)
                 - Does not contain space, tab, etc...
                 """)
         String password

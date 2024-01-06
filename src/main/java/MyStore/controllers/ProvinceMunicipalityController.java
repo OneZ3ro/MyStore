@@ -1,5 +1,6 @@
 package MyStore.controllers;
 
+import MyStore.entities.Province;
 import MyStore.services.ProvinceMunicipalityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,11 @@ public class ProvinceMunicipalityController {
     @GetMapping("/sigla")
     public String getSigla(@RequestParam("provinceName") String provinceName) {
         return provinceMunicipalityService.getSiglaByProvinceName(provinceName);
+    }
+
+    @GetMapping("/siglaByMunId")
+    public Province getProvinceObjByMunId(@RequestParam("municipalityId") long municipalityId) {
+        return provinceMunicipalityService.getProvinceObjByMunId(municipalityId);
     }
 
     @GetMapping("/caps")
