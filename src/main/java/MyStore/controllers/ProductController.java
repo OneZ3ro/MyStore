@@ -1,10 +1,14 @@
 package MyStore.controllers;
 
+import MyStore.entities.MainCategory;
 import MyStore.entities.Product;
+import MyStore.entities.SubCategory;
 import MyStore.entities.User;
 import MyStore.payloads.entities.ProductDTO;
 import MyStore.payloads.entities.UserRegistrationDTO;
+import MyStore.services.MainCategoryService;
 import MyStore.services.ProductService;
+import MyStore.services.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,16 +28,51 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private MainCategoryService mainCategoryService;
+
+    @Autowired
+    private SubCategoryService subCategoryService;
+
     @GetMapping("")
     public Page<Product> getProduct(@RequestParam(defaultValue = "0") int page,
-                                    @RequestParam(defaultValue = "10") int size,
-                                    @RequestParam(defaultValue = "userId") String orderBy){
+                                    @RequestParam(defaultValue = "12") int size,
+                                    @RequestParam(defaultValue = "productId") String orderBy){
         return productService.getProducts(page, size, orderBy);
+    }
+
+    @GetMapping("/name/{name}")
+    public Page<Product> getProductByName(@RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "12") int size,
+                                    @RequestParam(defaultValue = "productId") String orderBy,
+                                          @PathVariable String name){
+        return productService.getProductsByName(page, size, orderBy, name);
+    }
+
+    @GetMapping("/all")
+    public List<Product> getAllProducts(){
+        return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
     public Product getProduct(@PathVariable UUID productId) {
         return productService.getProductById(productId);
+    }
+
+    @GetMapping("/mainCategories")
+    public List<MainCategory> getMainCategories() {
+        return mainCategoryService.getMainCategories();
+    }
+
+    @GetMapping("/mainCategories/{mainCategName}")
+    public Page<Product> getProductByMainCategName(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size,
+                                                   @RequestParam(defaultValue = "productId") String orderBy, @PathVariable String mainCategName){
+        return productService.getProductsByMainCategory(page, size, orderBy, mainCategName);
+    }
+
+    @GetMapping("/subCategories")
+    public List<SubCategory> getSubCategories() {
+        return subCategoryService.getSubCategories();
     }
 
     @PostMapping("")

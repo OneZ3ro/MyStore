@@ -17,7 +17,7 @@ public class Order {
     @GeneratedValue
     @Column(name = "orders_id")
     private UUID orderId;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "orders_products", joinColumns = @JoinColumn(name = "orders_id"), inverseJoinColumns = @JoinColumn(name = "products_id"))
     private List<Product> products;
     private double total;

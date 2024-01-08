@@ -2,6 +2,7 @@ package MyStore.services;
 
 import MyStore.entities.Municipality;
 import MyStore.entities.Product;
+import MyStore.entities.SubCategory;
 import MyStore.entities.User;
 import MyStore.enums.Role;
 import MyStore.exceptions.BadRequestException;
@@ -13,14 +14,12 @@ import MyStore.repositories.ProductRepository;
 import MyStore.repositories.SubCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,6 +36,10 @@ public class ProductService {
     public Page<Product> getProducts (int page, int size, String orderBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(orderBy));
         return productRepository.findAll(pageable);
+    }
+
+    public List<Product> getAllProducts () {
+        return productRepository.findAll();
     }
 
     public Product getProductById (UUID productId) throws NotFoundException {
@@ -88,5 +91,21 @@ public class ProductService {
         productFound.setSubCategory(subCategoryService.getSubCategoryByName(body.subCategory()));
         productFound.setUserSeller(userService.getUserById(body.userSeller()));
         return productRepository.save(productFound);
+    }
+
+    public Page<Product> getProductsByMainCategory (int page, int size, String orderBy, String mainCatName) {
+        List<Product> filteredProducts = productRepository.findAll().stream().filter(product -> product.getSubCategory().getMainCategory().getMainCategoryName().toLowerCase().equals(mainCatName.toLowerCase())).toList();
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(orderBy));
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), filteredProducts.size());
+        return new PageImpl<>(filteredProducts.subList(start, end), pageRequest, filteredProducts.size());
+    }
+
+    public Page<Product> getProductsByName (int page, int size, String orderBy, String name) {
+        List<Product> filteredProducts = productRepository.findByNameContaining(name).orElseThrow(() -> new NotFoundException("Product name", name));
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(orderBy));
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), filteredProducts.size());
+        return new PageImpl<>(filteredProducts.subList(start, end), pageRequest, filteredProducts.size());
     }
 }

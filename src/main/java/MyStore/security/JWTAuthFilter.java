@@ -42,6 +42,11 @@ import java.util.UUID;
 
         @Override
         protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-            return new AntPathMatcher().match("/auth/**", request.getServletPath());
+            AntPathMatcher pathMatcher = new AntPathMatcher();
+            String servletPath = request.getServletPath();
+            if (pathMatcher.match("/auth/**", servletPath)) {
+                return true;
+            }
+            return request.getMethod().equals("GET") && pathMatcher.match("/products/**", servletPath);
         }
     }

@@ -37,7 +37,7 @@ public class UserController {
     @GetMapping("")
     @PreAuthorize("hasAuthority('ADMIN')")
     public Page<User> getUser(@RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "10") int size,
+                              @RequestParam(defaultValue = "12") int size,
                               @RequestParam(defaultValue = "userId") String orderBy){
         return userService.getUsers(page, size, orderBy);
     }
