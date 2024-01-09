@@ -1,6 +1,5 @@
 package MyStore.services;
 
-import MyStore.entities.MainCategory;
 import MyStore.entities.SubCategory;
 import MyStore.exceptions.NotFoundException;
 import MyStore.repositories.SubCategoryRepository;

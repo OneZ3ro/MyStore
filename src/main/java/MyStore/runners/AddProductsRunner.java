@@ -1,18 +1,11 @@
 package MyStore.runners;
 
-import MyStore.entities.MainCategory;
 import MyStore.entities.Product;
-import MyStore.entities.SubCategory;
 import MyStore.entities.User;
 import MyStore.enums.Role;
-import MyStore.exceptions.NotFoundException;
-import MyStore.repositories.MunicipalityRepository;
 import MyStore.repositories.ProductRepository;
 import MyStore.repositories.UserRepository;
-import MyStore.services.MainCategoryService;
-import MyStore.services.ProductService;
-import MyStore.services.SubCategoryService;
-import MyStore.services.UserService;
+import MyStore.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +19,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 
 @Component
-@Order(4)
+@Order(3)
 public class AddProductsRunner implements CommandLineRunner {
     @Value("${my.secret.password}")
     private String mySecretPassword;
@@ -43,8 +36,9 @@ public class AddProductsRunner implements CommandLineRunner {
     @Autowired
     private UserRepository userRepository;
 
+
     @Autowired
-    private MunicipalityRepository municipalityRepository;
+    private ResidentService residentService;
 
     @Autowired
     private PasswordEncoder bcrypt;
@@ -97,7 +91,7 @@ public class AddProductsRunner implements CommandLineRunner {
         user.setEmail("angmor@gmail.com");
         user.setPassword(bcrypt.encode(mySecretPassword));
         user.setBorn(LocalDate.parse("2002-01-01"));
-        user.setMunicipality(municipalityRepository.findByCap("20900").orElseThrow(() -> new NotFoundException("Cap", "20900")).stream().filter(municipality -> municipality.getName().equals("Monza")).toList().get(0));
+        user.setResident(residentService.getResidentByCap("20900"));
         user.setAddress("Via a caso, 13");
         user.setRoles(Arrays.asList(Role.USER, Role.ADMIN));
         return userRepository.save(user);

@@ -5,7 +5,6 @@ import MyStore.exceptions.BadRequestException;
 import MyStore.payloads.entities.UserLoginDTO;
 import MyStore.payloads.entities.UserLoginSuccessDTO;
 import MyStore.payloads.entities.UserRegistration1DTO;
-import MyStore.payloads.entities.UserRegistrationDTO;
 import MyStore.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

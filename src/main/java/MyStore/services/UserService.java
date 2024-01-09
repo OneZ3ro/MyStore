@@ -2,7 +2,6 @@ package MyStore.services;
 
 import MyStore.entities.User;
 import MyStore.exceptions.NotFoundException;
-import MyStore.payloads.entities.UserRegistrationDTO;
 import MyStore.repositories.UserRepository;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

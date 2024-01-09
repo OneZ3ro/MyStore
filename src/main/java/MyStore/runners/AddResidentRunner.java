@@ -1,8 +1,6 @@
 package MyStore.runners;
 
-import MyStore.entities.MainCategory;
 import MyStore.entities.Resident;
-import MyStore.entities.SubCategory;
 import MyStore.repositories.ResidentRepository;
 import MyStore.services.ResidentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 @Component
-@Order(2)
+@Order(1)
 public class AddResidentRunner implements CommandLineRunner {
     @Autowired
     private ResidentRepository residentRepository;

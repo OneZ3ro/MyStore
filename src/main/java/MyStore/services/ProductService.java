@@ -1,24 +1,14 @@
 package MyStore.services;
 
-import MyStore.entities.Municipality;
 import MyStore.entities.Product;
-import MyStore.entities.SubCategory;
-import MyStore.entities.User;
-import MyStore.enums.Role;
-import MyStore.exceptions.BadRequestException;
 import MyStore.exceptions.NotFoundException;
 import MyStore.payloads.entities.ProductDTO;
-import MyStore.payloads.entities.ProductDatasetDTO;
-import MyStore.payloads.entities.UserRegistrationDTO;
 import MyStore.repositories.ProductRepository;
-import MyStore.repositories.SubCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 

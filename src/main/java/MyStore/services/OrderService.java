@@ -1,18 +1,11 @@
 package MyStore.services;
 
 import MyStore.entities.Order;
-import MyStore.entities.Product;
 import MyStore.entities.User;
 import MyStore.exceptions.NotFoundException;
 import MyStore.payloads.entities.OrderDTO;
-import MyStore.payloads.entities.ProductDTO;
-import MyStore.payloads.entities.ProductDatasetDTO;
 import MyStore.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

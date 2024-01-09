@@ -1,7 +1,5 @@
 package MyStore.services;
 
-import MyStore.entities.Municipality;
-import MyStore.entities.Province;
 import MyStore.entities.Resident;
 import MyStore.entities.User;
 import MyStore.enums.Role;
@@ -12,7 +10,6 @@ import MyStore.payloads.entities.UserDTO;
 import MyStore.payloads.entities.UserLoginDTO;
 import MyStore.payloads.entities.UserRegistration1DTO;
 import MyStore.payloads.entities.UserRegistrationDTO;
-import MyStore.repositories.MunicipalityRepository;
 import MyStore.repositories.UserRepository;
 import MyStore.security.JWTTools;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +34,6 @@ public class AuthService {
     @Autowired
     private PasswordEncoder bcrypt;
 
-    @Autowired
-    private MunicipalityRepository municipalityRepository;
 
     @Autowired
     private ResidentService residentService;
@@ -57,17 +52,9 @@ public class AuthService {
             throw new BadRequestException("Email " + user.getEmail() + " has already been used. Please try with another email");
         });
         User newUser = new User();
-//        newUser.setName(body.name());
-//        newUser.setSurname(body.surname());
         newUser.setUsername(body.username());
         newUser.setEmail(body.email());
         newUser.setPassword(bcrypt.encode(body.password()));
-//        newUser.setBorn(body.born());
-//        newUser.setAddress(body.address());
-////      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
-//        Municipality municipality = municipalityRepository.findById(body.municipalityId()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityId()));
-//        newUser.setMunicipality(municipality);
-//        newUser.setImgProfile(body.urlImgProfile());
         newUser.setRoles(Arrays.asList(Role.USER));
         return userRepository.save(newUser);
     }
@@ -78,15 +65,10 @@ public class AuthService {
             userFound.setSurname(body.surname());
             userFound.setUsername(body.username());
             userFound.setEmail(body.email());
-//        userFound.setPassword(bcrypt.encode(body.password()));
             userFound.setBorn(body.born());
             userFound.setAddress(body.address());
-//      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
-//            Municipality municipality = municipalityRepository.findByName(body.municipalityName()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityName()));
-//        Province province = municipalityRepository.findById(municipality.getMunicipalityId()).orElseThrow(() -> new NotFoundException("municipalityId")).getProvince();
-//            userFound.setMunicipality(municipality);
-        Resident resident = residentService.getResidentByCap(body.cap());
-        userFound.setResident(resident);
+            Resident resident = residentService.getResidentByCap(body.cap());
+            userFound.setResident(resident);
             userFound.setImgProfile(body.urlImgProfile());
 
         if(body.newPassword() == null) {

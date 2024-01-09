@@ -5,7 +5,6 @@ import MyStore.entities.Product;
 import MyStore.entities.SubCategory;
 import MyStore.entities.User;
 import MyStore.payloads.entities.ProductDTO;
-import MyStore.payloads.entities.UserRegistrationDTO;
 import MyStore.services.MainCategoryService;
 import MyStore.services.ProductService;
 import MyStore.services.SubCategoryService;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
