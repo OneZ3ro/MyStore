@@ -13,7 +13,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 @Component
-@Order(2)
+@Order(3)
 public class AddMainAndSubCategoriesRunner implements CommandLineRunner {
     @Autowired
     private MainCategoryService mainCategoryService;

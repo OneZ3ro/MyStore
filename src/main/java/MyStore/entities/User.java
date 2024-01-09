@@ -36,8 +36,8 @@ public class User implements UserDetails {
     private String password;
     private LocalDate born;
     @ManyToOne
-    @JoinColumn(name = "municipalities_id")
-    private Municipality municipality;
+    @JoinColumn(name = "residents_id")
+    private Resident resident;
     private String address;
     @Column(name = "img_profile")
     private String imgProfile;

@@ -2,6 +2,7 @@ package MyStore.services;
 
 import MyStore.entities.Municipality;
 import MyStore.entities.Province;
+import MyStore.entities.Resident;
 import MyStore.entities.User;
 import MyStore.enums.Role;
 import MyStore.exceptions.BadRequestException;
@@ -38,6 +39,9 @@ public class AuthService {
 
     @Autowired
     private MunicipalityRepository municipalityRepository;
+
+    @Autowired
+    private ResidentService residentService;
 
     public String authenticateUser(UserLoginDTO body) throws Exception{
         User user = userService.getUserByEmail(body.email());
@@ -78,9 +82,11 @@ public class AuthService {
             userFound.setBorn(body.born());
             userFound.setAddress(body.address());
 //      Nel caso non funzionasse prova a racchiudere le due line sottostanti nel: if (body.municipalityId() != 0) {}
-            Municipality municipality = municipalityRepository.findByName(body.municipalityName()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityName()));
-        Province province = municipalityRepository.findById(municipality.getMunicipalityId()).orElseThrow(() -> new NotFoundException("municipalityId")).getProvince();
-            userFound.setMunicipality(municipality);
+//            Municipality municipality = municipalityRepository.findByName(body.municipalityName()).orElseThrow(() -> new NotFoundException("Municipality", body.municipalityName()));
+//        Province province = municipalityRepository.findById(municipality.getMunicipalityId()).orElseThrow(() -> new NotFoundException("municipalityId")).getProvince();
+//            userFound.setMunicipality(municipality);
+        Resident resident = residentService.getResidentByCap(body.cap());
+        userFound.setResident(resident);
             userFound.setImgProfile(body.urlImgProfile());
 
         if(body.newPassword() == null) {
@@ -93,6 +99,6 @@ public class AuthService {
                 throw new UnauthorizedException("Invalid credentials");
             }
         }
-        return new UserDTO(body.name(), body.surname(), body.born(), province.getRegion(), province.getName(), province.getSigla(), municipality.getCap(), municipality.getName(), municipality.getMunicipalityId(), body.address().split(",")[0], Long.parseLong(body.address().split(", ")[1]), body.username(), body.email());
+        return new UserDTO(body.name(), body.surname(), body.born(),resident, body.address().split(", ")[0], Long.parseLong(body.address().split(", ")[1]), body.username(), body.email());
     }
 }

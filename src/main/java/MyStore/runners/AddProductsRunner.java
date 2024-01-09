@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 
 @Component
-@Order(3)
+@Order(4)
 public class AddProductsRunner implements CommandLineRunner {
     @Value("${my.secret.password}")
     private String mySecretPassword;

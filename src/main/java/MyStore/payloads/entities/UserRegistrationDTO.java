@@ -37,7 +37,7 @@ public record UserRegistrationDTO(
         LocalDate born,
         @NotEmpty(message = "The address filed is mandatory")
         String address,
-        @NotEmpty(message = "The municipality name is mandatory")
-        String municipalityName,
+        @NotEmpty(message = "The cap field is mandatory")
+        String cap,
         String urlImgProfile
 ) {}
