@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public UserDTO updateProfileUser(@AuthenticationPrincipal User currentUser, @RequestBody @Validated UserRegistrationDTO body) {
+    public User updateProfileUser(@AuthenticationPrincipal User currentUser, @RequestBody @Validated UserRegistrationDTO body) {
         return authService.updateUserById(currentUser.getUserId(), body);
     }
 

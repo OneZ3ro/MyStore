@@ -59,8 +59,9 @@ public class AuthService {
         return userRepository.save(newUser);
     }
 
-    public UserDTO updateUserById (UUID userId, UserRegistrationDTO body) throws NotFoundException {
+    public User updateUserById (UUID userId, UserRegistrationDTO body) throws NotFoundException {
         User userFound = userService.getUserById(userId);
+        System.out.println(body);
             userFound.setName(body.name());
             userFound.setSurname(body.surname());
             userFound.setUsername(body.username());
@@ -72,15 +73,15 @@ public class AuthService {
             userFound.setImgProfile(body.urlImgProfile());
 
         if(body.newPassword() == null) {
-            userRepository.save(userFound);
+            return userRepository.save(userFound);
         } else {
             if (bcrypt.matches(body.oldPassword(), userFound.getPassword())) {
                 userFound.setPassword(bcrypt.encode(body.newPassword()));
-                userRepository.save(userFound);
+                return userRepository.save(userFound);
             } else {
                 throw new UnauthorizedException("Invalid credentials");
             }
         }
-        return new UserDTO(body.name(), body.surname(), body.born(),resident, body.address().split(", ")[0], Long.parseLong(body.address().split(", ")[1]), body.username(), body.email());
+//        return new UserDTO(body.name(), body.surname(), body.born(),resident, body.address().split(", ")[0], Long.parseLong(body.address().split(", ")[1]), body.username(), body.email());
     }
 }
