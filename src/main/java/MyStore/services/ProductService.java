@@ -100,7 +100,7 @@ public class ProductService {
     }
 
     public Page<Product> getProductsByName (int page, int size, String orderBy, String name) {
-        List<Product> filteredProducts = productRepository.findByNameContaining(name).orElseThrow(() -> new NotFoundException("Product name", name));
+        List<Product> filteredProducts = productRepository.findByNameContainingIgnoreCase(name).orElseThrow(() -> new NotFoundException("Product name", name));
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(orderBy));
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), filteredProducts.size());
