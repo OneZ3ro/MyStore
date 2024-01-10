@@ -1,5 +1,6 @@
 package MyStore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Table(name = "orders")
 @Getter
 @Setter
+@JsonIgnoreProperties({"user"})
 public class Order {
     @Id
     @GeneratedValue
