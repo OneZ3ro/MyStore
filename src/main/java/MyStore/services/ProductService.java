@@ -91,6 +91,14 @@ public class ProductService {
         return new PageImpl<>(filteredProducts.subList(start, end), pageRequest, filteredProducts.size());
     }
 
+    public Page<Product> getProductBySubCategName (int page, int size, String orderBy, String subCategName) {
+        List<Product> filteredProducts = productRepository.findAll().stream().filter(product -> product.getSubCategory().getName().toLowerCase().equals(subCategName.toLowerCase())).toList();
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(orderBy));
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), filteredProducts.size());
+        return new PageImpl<>(filteredProducts.subList(start, end), pageRequest, filteredProducts.size());
+    }
+
     public Page<Product> getProductsByName (int page, int size, String orderBy, String name) {
         List<Product> filteredProducts = productRepository.findByNameContaining(name).orElseThrow(() -> new NotFoundException("Product name", name));
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(orderBy));

@@ -73,6 +73,12 @@ public class ProductController {
         return subCategoryService.getSubCategories();
     }
 
+    @GetMapping("/subCategories/{subCategName}")
+    public Page<Product> getProductBySubCategName(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size,
+                                                   @RequestParam(defaultValue = "productId") String orderBy, @PathVariable String subCategName){
+        return productService.getProductBySubCategName(page, size, orderBy, subCategName);
+    }
+
     @PostMapping("")
     public Product saveProduct(@AuthenticationPrincipal User currentUser, @RequestBody @Validated ProductDTO body) {
         try {
